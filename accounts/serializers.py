@@ -1,12 +1,11 @@
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('id', 'username')
 
 
@@ -24,10 +23,10 @@ class LoginSerializer(serializers.Serializer):
 class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('username', 'password')
 
     def create(self, validated_data):
-        user = User.objects.create_user(username=validated_data['username'],
+        user = get_user_model().objects.create_user(username=validated_data['username'],
                                         password=validated_data['password'])
         return user
