@@ -31,7 +31,7 @@ class MessageCreateAPI(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        message = serializer.save(author=request.user)
+        message = serializer.save(author=request.user, chat_id=kwargs.get('pk'))
         return Response({
             'message': MessageSerializer(message, context=self.get_serializer_context()).data
         }, status=status.HTTP_201_CREATED)
@@ -44,11 +44,14 @@ class ChatHistoryAPI(generics.ListAPIView):
     serializer_class = MessagePreviewSerializer
 
     def list(self, request, *args, **kwargs):
-        chat_id = self.kwargs["pk"]
+        chat_id = kwargs.get('pk')
 
         try:
             chat = Chat.objects.get(pk=chat_id)
         except ObjectDoesNotExist:
+            return Response('Chat does not exist', status=status.HTTP_404_NOT_FOUND)
+
+        if request.user not in chat.participants.all():
             return Response('Chat does not exist', status=status.HTTP_404_NOT_FOUND)
 
         serializer = MessagePreviewSerializer(chat.messages, many=True)

@@ -23,6 +23,8 @@ class ChatSerializer(serializers.ModelSerializer):
             invited_pks = json.loads(validated_data.get('invited'))
         except json.JSONDecodeError:
             raise serializers.ValidationError('`invited` parameter is a json-like list of integers')
+        except TypeError:
+            raise serializers.ValidationError('`invited` parameter should not be missing')
 
         if not isinstance(invited_pks, list):
             raise serializers.ValidationError('`invited` parameter is a list of integers')
@@ -54,12 +56,11 @@ class ChatPreviewSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    chat_id = serializers.IntegerField()
     author = UserSerializer(read_only=True)
 
     class Meta:
         model = Message
-        fields = ('id', 'chat_id', 'author', 'text', 'created_at')
+        fields = ('id', 'author', 'text', 'created_at')
 
     def create(self, validated_data):
         chat_id = validated_data.get('chat_id')
