@@ -46,6 +46,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
 
 class ChatPreviewSerializer(serializers.ModelSerializer):
+    creator = UserSerializer(read_only=True)
 
     class Meta:
         model = Chat
@@ -79,6 +80,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class MessagePreviewSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
 
     class Meta:
         model = Message
