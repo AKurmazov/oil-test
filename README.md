@@ -126,3 +126,5 @@ Get the **list of chats** where our user is a **participant**
 curl --location --request GET 'http://0.0.0.0:8000/api/chats/user' \
 --header 'Authorization: Token <token>'
 ```
+
+Finally, you can visit the admin page at http://0.0.0.0:8000/admin so that to check how we changed the DB doing these cURL requests
